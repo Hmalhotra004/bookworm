@@ -7,3 +7,11 @@ export interface IUser extends Document {
   profileImage: string;
   comparePassword: (password: string) => Promise<boolean>;
 }
+
+export interface IBook extends Document {
+  title: string;
+  caption: string;
+  rating: number;
+  image: string;
+  user: IUser["_id"];
+}
