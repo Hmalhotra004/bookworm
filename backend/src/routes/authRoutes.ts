@@ -1,6 +1,6 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/user";
+import User from "../models/User";
 
 const router = express.Router();
 
@@ -8,36 +8,34 @@ const generateToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "15d" });
 };
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: Request, res: Response): Promise<any> => {
   try {
     const { username, email, password } = req.body;
 
-    console.log(username);
-
     if (!username || !email || !password) {
-      res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     if (password.length < 6) {
-      res
+      return res
         .status(400)
         .json({ message: "Password must be at least 6 characters" });
     }
 
     if (username.length < 3) {
-      res
+      return res
         .status(400)
         .json({ message: "Username must be at least 3 characters" });
     }
 
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      res.status(409).json({ message: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      res.status(409).json({ message: "Username already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
 
     const profileImage = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
