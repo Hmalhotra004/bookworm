@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { connectDB } from "./lib/db";
-import authRoutes from "./routes/authRoutes";
+import authRoutes from "./routes/auth.route";
 
 const app = express();
 const PORT = process.env.PORT;

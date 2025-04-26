@@ -1,14 +1,8 @@
-import express, { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
+import { generateToken } from "../lib/utils";
 import User from "../models/User";
 
-const router = express.Router();
-
-const generateToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "15d" });
-};
-
-router.post("/register", async (req: Request, res: Response): Promise<any> => {
+export const register = async (req: Request, res: Response): Promise<any> => {
   try {
     const { username, email, password } = req.body;
 
@@ -64,10 +58,8 @@ router.post("/register", async (req: Request, res: Response): Promise<any> => {
     console.log("ERROR_REGISTER " + err);
     res.status(500).json({ message: "Internal server error" });
   }
-});
+};
 
-router.post("/login", async (req, res) => {
+export const login = async (req: Request, res: Response): Promise<any> => {
   res.send("Login route");
-});
-
-export default router;
+};
