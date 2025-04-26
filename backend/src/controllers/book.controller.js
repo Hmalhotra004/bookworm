@@ -28,3 +28,29 @@ export const addBook = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getBooks = async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 5;
+    const skip = (page - 1) * limit;
+
+    const books = await Book.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("user", "username profileImage");
+
+    const totalBooks = await Book.countDocuments();
+
+    res.send({
+      books,
+      currentPage: page,
+      totalBooks,
+      totalPages: Math.ceil(totalBooks / limit),
+    });
+  } catch (err) {
+    console.log("ERROR_GET_BOOKS " + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
