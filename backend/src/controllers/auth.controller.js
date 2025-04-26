@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-import { generateToken } from "../lib/utils";
-import User from "../models/User";
+import { generateToken } from "../lib/utils.js";
+import User from "../models/User.js";
 
-export const register = async (req: Request, res: Response): Promise<any> => {
+export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -60,7 +59,7 @@ export const register = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
-export const login = async (req: Request, res: Response): Promise<any> => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 

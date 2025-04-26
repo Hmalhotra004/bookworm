@@ -1,6 +1,6 @@
 import express from "express";
-import { addBook } from "../controllers/book.controller";
-import protectRoute from "../middleware/auth.middleware";
+import { addBook } from "../controllers/book.controller.js";
+import protectRoute from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 

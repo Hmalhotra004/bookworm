@@ -1,23 +1,14 @@
-import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import User from "../models/User.js";
 
-interface DecodedToken {
-  userId: string;
-}
-
-const protectRoute = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
+const protectRoute = async (req, res, next) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as DecodedToken;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.userId).select("-password");
 

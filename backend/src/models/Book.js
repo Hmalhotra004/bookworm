@@ -1,7 +1,6 @@
-import { IBook } from "lib/types";
 import mongoose from "mongoose";
 
-const bookSchema = new mongoose.Schema<IBook>(
+const bookSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -30,6 +29,6 @@ const bookSchema = new mongoose.Schema<IBook>(
   { timestamps: true }
 );
 
-const Book = mongoose.model<IBook>("Book", bookSchema);
+const Book = mongoose.model("Book", bookSchema);
 
 export default Book;

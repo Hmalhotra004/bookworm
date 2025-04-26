@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
-import cloudinary from "../lib/cloudinary";
-import Book from "../models/Book";
+import cloudinary from "../lib/cloudinary.js";
+import Book from "../models/Book.js";
 
-export const addBook = async (req: Request, res: Response): Promise<any> => {
+export const addBook = async (req, res) => {
   try {
     const { title, caption, rating, image } = req.body;
 
