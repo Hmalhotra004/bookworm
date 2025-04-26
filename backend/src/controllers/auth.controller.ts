@@ -61,5 +61,36 @@ export const register = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const login = async (req: Request, res: Response): Promise<any> => {
-  res.send("Login route");
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = generateToken(user._id.toString());
+
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        profileImage: user.profileImage,
+      },
+    });
+  } catch (err) {
+    console.log("ERROR_LOGIN " + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
