@@ -54,3 +54,47 @@ export const getBooks = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const deleteBook = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    if (book.user.toString() !== req.user._id.toString())
+      return res
+        .status(401)
+        .json({ message: "You are not authorized to delete this book" });
+
+    if (book.image && book.image.includes("cloudinary")) {
+      try {
+        const publicId = book.image.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
+      } catch (err) {
+        console.log("ERROR_DELETE_CLOUDINARY_IMAGE " + err);
+        return res.status(500).json({ message: "Internal server error" });
+      }
+    }
+
+    await book.deleteOne();
+
+    res.status(200).json({ message: "Book deleted successfully" });
+  } catch (err) {
+    console.log("ERROR_DELETE_BOOK " + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getUserBooks = async (req, res) => {
+  try {
+    const books = await Book.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(books);
+  } catch (err) {
+    console.log("ERROR_GET_USER_BOOKS " + err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
