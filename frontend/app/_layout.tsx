@@ -22,6 +22,10 @@ export default function RootLayout() {
     if (isLogedIn && inAuthScreen) router.replace("/(tabs)");
   }, [user, token, segments]);
 
+  // useEffect(() => {
+  //   if (router) router.push("/create");
+  // }, [router]);
+
   return (
     <SafeAreaProvider>
       <SafeScreen>

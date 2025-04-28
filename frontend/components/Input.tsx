@@ -1,5 +1,6 @@
 import styles from "@/assets/styles/signup.styles";
 import COLORS from "@/constants/colors";
+import { IoniconNames } from "@/lib/types";
 import { Ionicons } from "@expo/vector-icons";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import {
@@ -9,8 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-type IoniconNames = React.ComponentProps<typeof Ionicons>["name"];
 
 interface InputProps {
   label: string;

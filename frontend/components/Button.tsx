@@ -1,4 +1,7 @@
-import styles from "@/assets/styles/login.styles";
+import styles from "@/assets/styles/create.styles";
+import COLORS from "@/constants/colors";
+import { IoniconNames } from "@/lib/types";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
 
@@ -6,9 +9,10 @@ interface ButtonProps {
   fn: () => void;
   isLoading: boolean;
   label: string;
+  icon?: IoniconNames;
 }
 
-const Button = ({ fn, isLoading, label }: ButtonProps) => {
+const Button = ({ fn, isLoading, label, icon }: ButtonProps) => {
   return (
     <TouchableOpacity
       style={styles.button}
@@ -16,9 +20,19 @@ const Button = ({ fn, isLoading, label }: ButtonProps) => {
       disabled={isLoading}
     >
       {isLoading ? (
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={COLORS.white} />
       ) : (
-        <Text style={styles.buttonText}>{label}</Text>
+        <>
+          {icon && (
+            <Ionicons
+              name={icon}
+              size={20}
+              color={COLORS.white}
+              style={styles.buttonIcon}
+            />
+          )}
+          <Text style={styles.buttonText}>{label}</Text>
+        </>
       )}
     </TouchableOpacity>
   );
