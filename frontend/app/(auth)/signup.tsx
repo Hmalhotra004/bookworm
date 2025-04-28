@@ -1,9 +1,11 @@
 import styles from "@/assets/styles/signup.styles";
 import Input from "@/components/Input";
+import useAuthStore from "@/store/authStore";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -15,9 +17,15 @@ export default function signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setisLoading] = useState(false);
 
-  async function handleSignup() {}
+  const { user, isLoading, register } = useAuthStore();
+
+  async function handleSignup() {
+    const result = await register(username, email, password);
+    if (!result.success) {
+      Alert.alert("Error", result.error);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -69,7 +77,7 @@ export default function signup() {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>Signup</Text>
             )}
           </TouchableOpacity>
 
