@@ -21,6 +21,12 @@ export const register = async (req, res) => {
         .json({ message: "Username must be at least 3 characters" });
     }
 
+    if (!email.includes("@gmail.com")) {
+      return res
+        .status(400)
+        .json({ message: "Email must be a valid Gmail address" });
+    }
+
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
       return res.status(409).json({ message: "Email already exists" });
