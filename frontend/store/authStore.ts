@@ -13,17 +13,52 @@ interface AuthStore {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  login: (email: string, password: string) => Promise<result>;
   register: (
     username: string,
     email: string,
     password: string
   ) => Promise<result>;
+  checkAuth: () => void;
+  logout: () => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   token: null,
   isLoading: false,
+
+  login: async (email: string, password: string) => {
+    try {
+      set({ isLoading: true });
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+        await AsyncStorage.setItem("token", data.token);
+
+        set({ user: data.user, token: data.token, isLoading: false });
+
+        return {
+          success: true,
+        };
+      } else {
+        set({ isLoading: false });
+        return { success: false, error: "Something went wrong!" };
+      }
+    } catch (error) {
+      set({ isLoading: false });
+      if (axios.isAxiosError(error)) {
+        console.log(error.response);
+        return { success: false, error: error.response?.data.message };
+      }
+      return { success: false, error: "Something went wrong!" };
+    }
+  },
 
   register: async (username: string, email: string, password: string) => {
     try {
@@ -58,6 +93,24 @@ const useAuthStore = create<AuthStore>((set) => ({
       }
       return { success: false, error: "Something went wrong!" };
     }
+  },
+
+  checkAuth: async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userJson = await AsyncStorage.getItem("user");
+      const user = userJson ? JSON.parse(userJson) : null;
+
+      set({ token, user });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  logout: async () => {
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("token");
+    set({ token: null, user: null });
   },
 }));
 

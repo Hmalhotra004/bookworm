@@ -1,10 +1,10 @@
 import styles from "@/assets/styles/signup.styles";
+import Button from "@/components/Button";
 import Input from "@/components/Input";
 import useAuthStore from "@/store/authStore";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -73,17 +73,11 @@ export default function signup() {
               isPassword
             />
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSignup}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Signup</Text>
-            )}
-          </TouchableOpacity>
+          <Button
+            fn={handleSignup}
+            isLoading={isLoading}
+            label="Signup"
+          />
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Already have an Acount?</Text>

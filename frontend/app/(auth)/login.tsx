@@ -1,9 +1,11 @@
 import styles from "@/assets/styles/login.styles";
+import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { Link } from "expo-router";
+import useAuthStore from "@/store/authStore";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -15,9 +17,18 @@ import {
 const login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setisLoading] = useState(false);
 
-  function handleLogin() {}
+  const { isLoading, login } = useAuthStore();
+  const router = useRouter();
+
+  async function handleLogin() {
+    const result = await login(email, password);
+    if (result.success) {
+      router.dismissTo("/");
+    } else {
+      Alert.alert("Error", result.error);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -55,17 +66,11 @@ const login = () => {
               isPassword
             />
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Login</Text>
-              )}
-            </TouchableOpacity>
+            <Button
+              fn={handleLogin}
+              isLoading={isLoading}
+              label="Login"
+            />
 
             <View style={styles.footer}>
               <Text style={styles.footerText}>Don't have an account?</Text>
