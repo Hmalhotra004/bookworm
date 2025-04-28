@@ -1,7 +1,7 @@
 import styles from "@/assets/styles/signup.styles";
 import Input from "@/components/Input";
 import useAuthStore from "@/store/authStore";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -19,9 +19,13 @@ export default function signup() {
   const [password, setPassword] = useState("");
 
   const { user, isLoading, register } = useAuthStore();
+  const router = useRouter();
 
   async function handleSignup() {
     const result = await register(username, email, password);
+    if (result.success) {
+      router.dismissTo("/");
+    }
     if (!result.success) {
       Alert.alert("Error", result.error);
     }
