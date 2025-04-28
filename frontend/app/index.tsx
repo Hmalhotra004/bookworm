@@ -11,7 +11,12 @@ export default function Index() {
       }}
     >
       <Link href={"/login"}>Logni</Link>
-      <Link href={"/signup"}>Sign</Link>
+      <Link
+        href={"/signup"}
+        style={{ marginTop: 100 }}
+      >
+        Sign
+      </Link>
     </View>
   );
 }

@@ -1,10 +1,86 @@
-import React from "react";
-import { Text, View } from "react-native";
+import styles from "@/assets/styles/signup.styles";
+import Input from "@/components/Input";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function signup() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setisLoading] = useState(false);
+
+  async function handleSignup() {}
+
   return (
-    <View>
-      <Text>signup</Text>
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <View style={styles.header}>
+            <Text style={styles.title}>BookWorm</Text>
+            <Text style={styles.subtitle}>Share your favorite reads</Text>
+          </View>
+          <View style={styles.formContainer}>
+            <Input
+              label="Username"
+              placeholder="Enter your Username"
+              iconLabel="person-outline"
+              state={username}
+              setState={setUsername}
+              isPassword={false}
+              keyboardType="default"
+            />
+
+            <Input
+              label="Email"
+              placeholder="Enter your Email"
+              iconLabel="mail-outline"
+              state={email}
+              setState={setEmail}
+              isPassword={false}
+              keyboardType="default"
+            />
+
+            <Input
+              label="Password"
+              placeholder="******"
+              iconLabel="lock-closed-outline"
+              state={password}
+              setState={setPassword}
+              keyboardType="default"
+              isPassword
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSignup}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Login</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Already have an Acount?</Text>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Text style={styles.link}>Login</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
