@@ -23,9 +23,7 @@ const login = () => {
 
   async function handleLogin() {
     const result = await login(email, password);
-    if (result.success) {
-      router.dismissTo("/");
-    } else {
+    if (!result.success) {
       Alert.alert("Error", result.error);
     }
   }

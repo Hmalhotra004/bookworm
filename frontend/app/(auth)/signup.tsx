@@ -23,9 +23,6 @@ export default function signup() {
 
   async function handleSignup() {
     const result = await register(username, email, password);
-    if (result.success) {
-      router.dismissTo("/");
-    }
     if (!result.success) {
       Alert.alert("Error", result.error);
     }
