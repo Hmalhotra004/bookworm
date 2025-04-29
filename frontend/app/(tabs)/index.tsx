@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Alert, FlatList, Text, View } from "react-native";
 
 export default function Index() {
-  const [books, setBooks] = useState<Book[] | undefined>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [refeshing, setRefeshing] = useState(false);
   const [page, setPage] = useState(1);
@@ -42,7 +42,7 @@ export default function Index() {
                       [...books, ...data.books].find((book) => book._id === id)
                     )
                 )
-              );
+              ).filter((book) => book !== undefined);
 
         setBooks(uniqueBooks);
         setHasMore(pageNo < data.totalPages);
