@@ -2,7 +2,7 @@ import styles from "@/assets/styles/login.styles";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import useAuthStore from "@/store/authStore";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -19,7 +19,6 @@ const login = () => {
   const [password, setPassword] = useState("");
 
   const { isLoading, login } = useAuthStore();
-  const router = useRouter();
 
   async function handleLogin() {
     const result = await login(email, password);
