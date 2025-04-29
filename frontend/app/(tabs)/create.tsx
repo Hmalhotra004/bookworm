@@ -1,7 +1,10 @@
 import styles from "@/assets/styles/create.styles";
 import Button from "@/components/Button";
 import COLORS from "@/constants/colors";
+import api from "@/lib/api";
+import useAuthStore from "@/store/authStore";
 import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
@@ -27,6 +30,7 @@ const create = () => {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const { token } = useAuthStore();
 
   async function pickImage() {
     try {
@@ -90,7 +94,59 @@ const create = () => {
     return <View style={styles.ratingContainer}>{stars}</View>;
   }
 
-  async function onSubmit() {}
+  async function onSubmit() {
+    if (!title || !caption || !imageBase64 || !rating) {
+      Alert.alert("Error", "Please fill all the fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const uriParts = image?.split(".");
+      if (uriParts) {
+        const fileType = uriParts[uriParts?.length - 1];
+        const imageType = fileType
+          ? `image/${fileType.toLowerCase()}`
+          : "image/jpeg";
+        const imageDataUrl = `data:${imageType};base64,${imageBase64}`;
+
+        const response = await api.post(
+          "/books/add",
+          {
+            title,
+            caption,
+            rating: rating.toString(),
+            image: imageDataUrl,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          Alert.alert("Success", "Your book recommendation has been posted!");
+          setTitle("");
+          setCaption("");
+          setRating(3);
+          setImage(null);
+          setImageBase64(null);
+          router.push("/(tabs)");
+        }
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        Alert.alert(
+          "Error",
+          err.response?.data.message || "Something went wrong"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
