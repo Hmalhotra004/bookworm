@@ -53,7 +53,6 @@ const useAuthStore = create<AuthStore>((set) => ({
     } catch (error) {
       set({ isLoading: false });
       if (axios.isAxiosError(error)) {
-        console.log(error.response);
         return { success: false, error: error.response?.data.message };
       }
       return { success: false, error: "Something went wrong!" };
@@ -87,7 +86,6 @@ const useAuthStore = create<AuthStore>((set) => ({
       set({ isLoading: false });
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400 || error.response?.status === 409) {
-          console.log(error.response);
           return { success: false, error: error.response?.data.message };
         }
       }
