@@ -1,4 +1,4 @@
-import api from "@/lib/db";
+import api from "@/lib/api";
 import { User } from "@/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
