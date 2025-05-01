@@ -1,15 +1,109 @@
+import styles from "@/assets/styles/profile.styles";
+import ProfileBook from "@/components/ProfileBook";
+import ProfileHeader from "@/components/ProfileHeader";
+import COLORS from "@/constants/colors";
+import api from "@/lib/api";
+import { Book } from "@/lib/types";
 import useAuthStore from "@/store/authStore";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
 
 const profile = () => {
-  const { user, token, checkAuth, logout } = useAuthStore();
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refeshing, setRefeshing] = useState(false);
+
+  const { token, logout, user } = useAuthStore();
+  const router = useRouter();
+
+  async function fetchBooks() {
+    try {
+      setLoading(true);
+
+      const response = await api.get<Book[]>(`/books/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+
+        setBooks(data);
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        Alert.alert(
+          "Error",
+          err.response?.data.message || "Something went wrong"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function confirmLogout() {
+    Alert.alert("Logout", "Are you sure you want to logout", [
+      { text: "Cancel", style: "cancel" },
+      { text: "logout", onPress: () => logout(), style: "destructive" },
+    ]);
+  }
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  if (!user) return null;
+
+  console.log(books);
+
   return (
-    <View>
-      <Text>{user?.username}</Text>
-      <TouchableOpacity onPress={logout}>
-        <Text>logout</Text>
+    <View style={styles.container}>
+      <ProfileHeader />
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={confirmLogout}
+      >
+        <Ionicons
+          name="log-out-outline"
+          size={20}
+          color={COLORS.white}
+        />
+        <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
+
+      <View style={styles.booksHeader}>
+        <Text style={styles.booksTitle}>Your recommendations</Text>
+        <Text style={styles.booksCount}>{books?.length || 0}</Text>
+      </View>
+
+      <FlatList
+        data={books}
+        keyExtractor={(item) => item._id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.booksList}
+        renderItem={({ item }) => <ProfileBook item={item} />}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons
+              name="book-outline"
+              size={50}
+              color={COLORS.textSecondary}
+            />
+            <Text style={styles.emptyText}>No recommendations yet</Text>
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={() => router.push("/(tabs)/create")}
+            >
+              <Text style={styles.addButtonText}>Add your first book</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
     </View>
   );
 };

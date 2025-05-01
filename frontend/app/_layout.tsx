@@ -23,7 +23,7 @@ export default function RootLayout() {
   }, [user, token, segments]);
 
   // useEffect(() => {
-  //   if (router) router.push("/create");
+  //   if (router) router.push("/(tabs)/profile");
   // }, [router]);
 
   return (
