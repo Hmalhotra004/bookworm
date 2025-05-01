@@ -1,4 +1,5 @@
 import styles from "@/assets/styles/profile.styles";
+import Loader from "@/components/Loader";
 import ProfileBook from "@/components/ProfileBook";
 import ProfileHeader from "@/components/ProfileHeader";
 import COLORS from "@/constants/colors";
@@ -9,7 +10,14 @@ import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const profile = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -53,13 +61,21 @@ const profile = () => {
     ]);
   }
 
+  async function handleRefresh() {
+    setRefeshing(true);
+    await fetchBooks();
+    setRefeshing(false);
+  }
+
   useEffect(() => {
     fetchBooks();
   }, []);
 
   if (!user) return null;
 
-  console.log(books);
+  if (loading && !refeshing) {
+    return <Loader size="large" />;
+  }
 
   return (
     <View style={styles.container}>
@@ -86,7 +102,21 @@ const profile = () => {
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.booksList}
-        renderItem={({ item }) => <ProfileBook item={item} />}
+        renderItem={({ item }) => (
+          <ProfileBook
+            item={item}
+            books={books}
+            setBooks={setBooks}
+          />
+        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refeshing}
+            onRefresh={handleRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons
