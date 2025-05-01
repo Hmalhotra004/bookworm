@@ -18,7 +18,7 @@ const login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { isLoading, login } = useAuthStore();
+  const { isLoading, login, isCheckingAuth } = useAuthStore();
 
   async function handleLogin() {
     const result = await login(email, password);
@@ -26,6 +26,8 @@ const login = () => {
       Alert.alert("Error", result.error);
     }
   }
+
+  if (isCheckingAuth) return null;
 
   return (
     <KeyboardAvoidingView

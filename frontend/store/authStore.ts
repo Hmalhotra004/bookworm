@@ -13,6 +13,7 @@ interface AuthStore {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  isCheckingAuth: boolean;
   login: (email: string, password: string) => Promise<result>;
   register: (
     username: string,
@@ -27,6 +28,7 @@ const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   token: null,
   isLoading: false,
+  isCheckingAuth: true,
 
   login: async (email: string, password: string) => {
     try {
@@ -102,6 +104,8 @@ const useAuthStore = create<AuthStore>((set) => ({
       set({ token, user });
     } catch (error) {
       console.log(error);
+    } finally {
+      set({ isCheckingAuth: false });
     }
   },
 
